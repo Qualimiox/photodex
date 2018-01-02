@@ -9,17 +9,20 @@ export default class PhotodexSubheader extends Component {
 
   componentWillMount() {
     let db = firebase.firestore();
-    db.collection('users').where('name', '==', this.props.trainerName).get().then(snapshot => {
+    this.unsubscribe = db.collection('users').where('name', '==', this.props.trainerName).onSnapshot(snapshot => {
       let trainer = snapshot.docs[0];
       if (trainer) {
-        let trainerId = trainer.id;
-        db.collection('users').doc(trainerId).collection('snaps').onSnapshot(snapshot =>
-          this.setState({ count: snapshot.size || 0 })
-        );
+        let thumbnails = trainer.data().thumbnails;
+        let count = thumbnails ? Object.keys(thumbnails).length : 0;
+        this.setState({ count });
       } else {
         this.setState({ count: 0 });
       }
     });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
   }
 
   render() {

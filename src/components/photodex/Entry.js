@@ -11,9 +11,7 @@ export default class Entry extends Component {
   }
 
   componentWillMount() {
-    if (this.props.snap) {
-      this.setState({ url: this.props.snap.rawUrl });
-    }
+    this.setState({ url: this.props.thumbnailURL });
   }
 
   onUploadClicked() {
@@ -31,7 +29,7 @@ export default class Entry extends Component {
         this.setState({ url: null });
         this.getStorageRef().put(file).then(snapshot => {
           let url = snapshot.downloadURL;
-          this.getDocRef().set({ rawUrl: url });
+          this.updateThumbnailURL(url);
           this.setState({ url });
         });
       }
@@ -41,28 +39,27 @@ export default class Entry extends Component {
   }
 
   onDeleteClicked() {
-    alertify.confirm(`Delete ${this.props.pokemon.name} snap?`, () => {
-      this.deleteSnap();
-    });
+    alertify.confirm(`Delete ${this.props.pokemon.name} snap?`, () => this.deleteSnap());
   }
 
   deleteSnap() {
     this.getStorageRef().delete();
-    this.getDocRef().delete();
+    this.updateThumbnailURL(firebase.firestore.FieldValue.delete());
     this.setState({ url: undefined });
   }
 
   getStorageRef() {
-    return firebase.storage().ref(`photodex/${this.props.trainerId}/raw/${this.props.number}`);
+    return firebase.storage().ref(`photodex/${this.props.trainerId}/raw/${this.props.pokemon.number}`);
   }
 
-  getDocRef() {
-    return firebase.firestore().collection('users').doc(this.props.trainerId)
-      .collection('snaps').doc(this.props.number);
+  updateThumbnailURL(url) {
+    let updateData = {};
+    updateData[`thumbnails.${this.props.pokemon.number}`] = url;
+    firebase.firestore().collection('users').doc(this.props.trainerId).update(updateData);
   }
 
   render() {
-    let className = `Photodex-Entry ${this.props.pokemon.region}`;
+    let className = `Photodex-Entry ${this.props.pokemon.region.toLowerCase()}`;
     if (!this.props.pokemon.obtainable) {
       className += ' unobtainable';
     }
@@ -73,7 +70,7 @@ export default class Entry extends Component {
           <img src={this.state.url} alt={this.props.pokemon.name} /> :
           this.state.url === null ?
             <Spinner /> :
-            this.props.number}
+            this.props.pokemon.number}
         {this.props.editMode && this.props.pokemon.obtainable &&
           <div className="Photodex-Entry-edit">
             <div className="Photodex-Entry-edit-name">{this.props.pokemon.name}</div>
