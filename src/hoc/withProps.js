@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 export default function withProps(WrappedComponent, otherProps) {
-  return class extends Component {
-    render() {
-      return <WrappedComponent {...this.props} {...otherProps} />
-    }
+  return function withPropsComponent(props) {
+    return (
+      <WrappedComponent {...props} {...otherProps} />
+    );
   }
 }
