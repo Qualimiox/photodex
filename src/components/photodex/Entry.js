@@ -46,7 +46,8 @@ export default class Entry extends Component {
   }
 
   getStorageRef() {
-    return firebase.storage().ref(`photodex/${this.props.trainerId}/raw/${this.props.pokemon.number}`);
+    let path = `photodex/${this.props.trainerId}/snaps/${this.props.pokemon.number}/raw`;
+    return firebase.storage().ref(path);
   }
 
   updateThumbnailURL(url) {
