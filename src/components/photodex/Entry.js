@@ -57,7 +57,6 @@ export default class Entry extends Component {
 
   render() {
     let { editMode, pokemon, url } = this.props;
-    let { uploading } = this.state;
     let className = `Photodex-Entry ${pokemon.region.toLowerCase()}`;
     if (!pokemon.obtainable) {
       className += ' unobtainable';
@@ -65,7 +64,9 @@ export default class Entry extends Component {
     return (
       <div className={className}>
         <input type="file" style={{ display: 'none' }} ref={input => this.fileInput = input} />
-        {url ? <img src={url} alt={pokemon.name} /> : uploading ? <Spinner /> : pokemon.number}
+        {this.state.uploading ? <Spinner /> :
+          url ? <img src={url} alt={pokemon.name} /> :
+            pokemon.number}
         {editMode && pokemon.obtainable &&
           <div className="Photodex-Entry-edit">
             <div className="Photodex-Entry-edit-name">{pokemon.name}</div>

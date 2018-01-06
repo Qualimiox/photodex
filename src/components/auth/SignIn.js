@@ -34,8 +34,10 @@ export default class SignIn extends Component {
   render() {
     return (
       <Form onSubmit={e => this.handleSubmit(e)} error={this.state.error}>
-        <EmailInput autoFocus required onChange={e => this.handleEmailChange(e)} value={this.state.email} />
-        <PasswordInput required onChange={e => this.handlePasswordChange(e)} value={this.state.password} />
+        <EmailInput autoFocus required
+          value={this.state.email} onChange={e => this.handleEmailChange(e)} />
+        <PasswordInput required
+          value={this.state.password} onChange={e => this.handlePasswordChange(e)} />
         <SubmitButton loading={this.state.loading} />
         <AuthenticationCancel />
         <div style={{ marginBottom: '10px' }}>

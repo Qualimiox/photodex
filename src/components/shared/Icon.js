@@ -1,7 +1,8 @@
 import React from 'react';
 
 export default function Icon(props) {
+  let { icon } = props;
   return (
-    <i className={`fa fa-${props.icon}`} aria-hidden="true"></i>
+    <i className={`fa fa-${icon}`} aria-hidden="true"></i>
   );
 }

@@ -8,7 +8,7 @@ import withLayout from '../hoc/withLayout';
 import withUser from '../hoc/withUser';
 import withTrainer from '../hoc/withTrainer';
 
-export default function App(props) {
+export default function App() {
   return (
     <Router>
       <Switch>

@@ -18,7 +18,7 @@ export default function Photodex(props) {
   if (numberOrMode === 'edit' && canEdit) {
     editMode = true;
   } else if (numberOrMode) {
-    return (<Redirect to={`/${this.trainer.name}`} />);
+    return (<Redirect to={`/${trainer.name}`} />);
   }
 
   let entries = pokedex.map((pokemon, i) => (

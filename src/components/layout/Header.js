@@ -15,13 +15,14 @@ export default class Header extends Component {
 
   render() {
     let { user, trainer } = this.props;
+    let numberOrMode = this.props.match.params.numberOrMode;
     let canEdit = user && trainer && (user.name === trainer.name);
-    let editMode = this.props.match.params.numberOrMode === 'edit';
+    let editMode = numberOrMode === 'edit';
     return (
       <header className="Header">
         <div className="Header-left">
           {user && <IconLink icon="picture-o" to={`/${user.name}`}
-             title="My Photódex" aria-label="My Photódex" />}
+            title="My Photódex" aria-label="My Photódex" />}
           {canEdit && (editMode ?
             <IconLink icon="eye" to={`/${user.name}`}
               title="View" aria-label="View" /> :
@@ -31,7 +32,7 @@ export default class Header extends Component {
         </div>
         <div className="Header-center">
           <h1 className="Header-title"><Link to="/">Photódex</Link></h1>
-            {trainer ? <PhotodexSubheader trainer={trainer} /> : <DefaultSubheader />}
+          {trainer ? <PhotodexSubheader trainer={trainer} /> : <DefaultSubheader />}
         </div>
         <div className="Header-right">
           {user !== undefined && (user !== null ?

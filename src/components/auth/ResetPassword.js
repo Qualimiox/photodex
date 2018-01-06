@@ -34,7 +34,8 @@ export default class ResetPassword extends Component {
     return (
       <Form onSubmit={e => this.handleSubmit(e)} error={this.state.error}>
         <SmallPrint>An email will be sent with password reset instructions.</SmallPrint>
-        <EmailInput autoFocus required onChange={e => this.handleEmailChange(e)} value={this.state.email} />
+        <EmailInput autoFocus required
+          value={this.state.email} onChange={e => this.handleEmailChange(e)} />
         <SubmitButton loading={this.state.loading}>Reset</SubmitButton>
         <AuthenticationCancel />
       </Form>

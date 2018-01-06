@@ -50,6 +50,8 @@
   max-width: 100%;
   display: block;
   margin: auto;
+  font-size: initial;
+  font-weight: bold;
 }
 
 .Photodex-Entry.placeholder {
