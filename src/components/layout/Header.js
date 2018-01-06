@@ -14,9 +14,8 @@ export default class Header extends Component {
   }
 
   render() {
-    let user = this.props.user;
-    let trainerName = this.props.match.params.trainer;
-    let canEdit = user && (user.name === trainerName);
+    let { user, trainer } = this.props;
+    let canEdit = user && trainer && (user.name === trainer.name);
     let editMode = this.props.match.params.numberOrMode === 'edit';
     return (
       <header className="Header">
@@ -32,7 +31,7 @@ export default class Header extends Component {
         </div>
         <div className="Header-center">
           <h1 className="Header-title"><Link to="/">Photódex</Link></h1>
-            {trainerName ? <PhotodexSubheader trainerName={trainerName} /> : <DefaultSubheader />}
+            {trainer ? <PhotodexSubheader trainer={trainer} /> : <DefaultSubheader />}
         </div>
         <div className="Header-right">
           {user !== undefined && (user !== null ?

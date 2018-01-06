@@ -7,11 +7,9 @@ import Spinner from '../shared/Spinner';
 export default class Entry extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
-  }
-
-  componentWillMount() {
-    this.setState({ url: this.props.thumbnailURL });
+    this.state = {
+      uploading: false
+    };
   }
 
   onUploadClicked() {
@@ -26,11 +24,11 @@ export default class Entry extends Component {
     this.fileInput.onchange = () => {
       let file = this.fileInput.files[0];
       if (file) {
-        this.setState({ url: null });
+        this.setState({ uploading: true });
         this.getStorageRef().put(file).then(snapshot => {
           let url = snapshot.downloadURL;
           this.updateThumbnailURL(url);
-          this.setState({ url });
+          this.setState({ uploading: false });
         });
       }
       this.fileInput.onchange = null;
@@ -45,7 +43,6 @@ export default class Entry extends Component {
   deleteSnap() {
     this.getStorageRef().delete();
     this.updateThumbnailURL(firebase.firestore.FieldValue.delete());
-    this.setState({ url: undefined });
   }
 
   getStorageRef() {
@@ -59,25 +56,23 @@ export default class Entry extends Component {
   }
 
   render() {
-    let className = `Photodex-Entry ${this.props.pokemon.region.toLowerCase()}`;
-    if (!this.props.pokemon.obtainable) {
+    let { editMode, pokemon, url } = this.props;
+    let { uploading } = this.state;
+    let className = `Photodex-Entry ${pokemon.region.toLowerCase()}`;
+    if (!pokemon.obtainable) {
       className += ' unobtainable';
     }
     return (
       <div className={className}>
         <input type="file" style={{ display: 'none' }} ref={input => this.fileInput = input} />
-        {this.state.url ?
-          <img src={this.state.url} alt={this.props.pokemon.name} /> :
-          this.state.url === null ?
-            <Spinner /> :
-            this.props.pokemon.number}
-        {this.props.editMode && this.props.pokemon.obtainable &&
+        {url ? <img src={url} alt={pokemon.name} /> : uploading ? <Spinner /> : pokemon.number}
+        {editMode && pokemon.obtainable &&
           <div className="Photodex-Entry-edit">
-            <div className="Photodex-Entry-edit-name">{this.props.pokemon.name}</div>
+            <div className="Photodex-Entry-edit-name">{pokemon.name}</div>
             <div className="Photodex-Entry-edit-buttons">
               <IconButton icon="upload" onClick={() => this.onUploadClicked()}
                 title="Upload" aria-label="Upload" />
-              {this.state.url && <IconButton icon="trash" onClick={() => this.onDeleteClicked()}
+              {url && <IconButton icon="trash" onClick={() => this.onDeleteClicked()}
                 title="Delete" aria-label="Delete" />}
             </div>
           </div>}
