@@ -1,19 +1,12 @@
 import alertify from 'alertify.js';
 import firebase from 'firebase';
 import React, { Component } from 'react';
+import Spinner from './Spinner';
 import IconButton from '../shared/IconButton';
-import Spinner from '../shared/Spinner';
 
 export default class Entry extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      uploading: false
-    };
-  }
-
   onUploadClicked() {
-    if (this.state.url) {
+    if (this.props.url) {
       alertify.confirm(`Replace ${this.props.pokemon.name} snap?`, () => this.uploadSnap());
     } else {
       this.uploadSnap();
@@ -24,16 +17,18 @@ export default class Entry extends Component {
     this.fileInput.onchange = () => {
       let file = this.fileInput.files[0];
       if (file) {
-        this.setState({ uploading: true });
-        this.getStorageRef().put(file).then(snapshot => {
-          let url = snapshot.downloadURL;
-          this.updateThumbnailURL(url);
-          this.setState({ uploading: false });
-        });
+        this.updateStatus('Uploading');
+        this.getStorageRef('raw').put(file).then(() => this.updateStatus('Processing'));
       }
       this.fileInput.onchange = null;
     }
     this.fileInput.click();
+  }
+
+  updateStatus(value) {
+    let updateData = {};
+    updateData[`snaps.${this.props.pokemon.number}.status`] = value;
+    this.getDocRef().update(updateData);
   }
 
   onDeleteClicked() {
@@ -41,42 +36,46 @@ export default class Entry extends Component {
   }
 
   deleteSnap() {
-    this.getStorageRef().delete();
-    this.updateThumbnailURL(firebase.firestore.FieldValue.delete());
+    let updateData = {};
+    updateData[`snaps.${this.props.pokemon.number}`] = firebase.firestore.FieldValue.delete();
+    this.getDocRef().update(updateData);
+    this.getStorageRef('raw').delete();
+    this.getStorageRef('thumbnail').delete();
+    this.getStorageRef('gallery').delete();
   }
 
-  getStorageRef() {
-    let path = `photodex/${this.props.trainerId}/snaps/${this.props.pokemon.number}/raw`;
+  getDocRef() {
+    return firebase.firestore().collection('users').doc(this.props.trainerId);
+  }
+
+  getStorageRef(file) {
+    let path = `photodex/${this.props.trainerId}/snaps/${this.props.pokemon.number}/${file}`;
     return firebase.storage().ref(path);
   }
 
-  updateThumbnailURL(url) {
-    let updateData = {};
-    updateData[`thumbnails.${this.props.pokemon.number}`] = url;
-    firebase.firestore().collection('users').doc(this.props.trainerId).update(updateData);
-  }
-
   render() {
-    let { editMode, pokemon, url } = this.props;
+    let { editMode, pokemon, snap } = this.props;
     let className = `Photodex-Entry ${pokemon.region.toLowerCase()}`;
+    let thumbnail = snap ? snap.thumbnail : undefined;
+    let status = snap ? snap.status : undefined;
     if (!pokemon.obtainable) {
       className += ' unobtainable';
     }
     return (
       <div className={className}>
         <input type="file" style={{ display: 'none' }} ref={input => this.fileInput = input} />
-        {this.state.uploading ? <Spinner /> :
-          url ? <img src={url} alt={pokemon.name} /> :
+        {status ? <Spinner status={status} /> :
+          thumbnail ? <img src={thumbnail} alt={pokemon.name} /> :
             pokemon.number}
         {editMode && pokemon.obtainable &&
           <div className="Photodex-Entry-edit">
             <div className="Photodex-Entry-edit-name">{pokemon.name}</div>
-            <div className="Photodex-Entry-edit-buttons">
+            {!status && <div className="Photodex-Entry-edit-buttons">
               <IconButton icon="upload" onClick={() => this.onUploadClicked()}
                 title="Upload" aria-label="Upload" />
-              {url && <IconButton icon="trash" onClick={() => this.onDeleteClicked()}
+              {thumbnail && <IconButton icon="trash" onClick={() => this.onDeleteClicked()}
                 title="Delete" aria-label="Delete" />}
-            </div>
+            </div>}
           </div>}
       </div>
     );

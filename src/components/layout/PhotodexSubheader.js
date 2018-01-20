@@ -6,7 +6,7 @@ export default function PhotodexSubheader(props) {
     <div>
       <p style={{ margin: '0', fontWeight: 'bold' }}>{trainer.name}</p>
       <h2 className="Header-subtitle" style={{ margin: '4px 0 0 0' }}>
-        Snapped: {Object.keys(trainer.thumbnails).length}
+        Snapped: {Object.keys(trainer.snaps).length}
       </h2>
     </div>
   );

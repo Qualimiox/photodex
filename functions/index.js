@@ -29,7 +29,7 @@ exports.processImages = functions.storage.object().onChange(event => {
   const fileName = path.basename(filePath);
   const filePattern = /^photodex\/([^\/]+)\/snaps\/(\d+)\/raw$/;
   const match = filePath.match(filePattern);
-  
+
   // Exit if the image is already transformed.
   if (!match) {
     console.log('Not a raw image.');
@@ -39,15 +39,18 @@ exports.processImages = functions.storage.object().onChange(event => {
   const trainerId = match[1];
   const pokemon = match[2];
 
-  const thumbFilePath = path.normalize(path.join(fileDir, 'thumb'));
+  const thumbnailFilePath = path.normalize(path.join(fileDir, 'thumbnail'));
+  const galleryFilePath = path.normalize(path.join(fileDir, 'gallery'));
   const tempLocalFile = path.join(os.tmpdir(), filePath);
   const tempLocalDir = path.dirname(tempLocalFile);
-  const tempLocalThumbFile = path.join(os.tmpdir(), thumbFilePath);
+  const tempLocalThumbnailFile = path.join(os.tmpdir(), thumbnailFilePath);
+  const tempLocalGalleryFile = path.join(os.tmpdir(), galleryFilePath);
 
   // Cloud Storage files.
   const bucket = gcs.bucket(event.data.bucket);
   const file = bucket.file(filePath);
-  const thumbFile = bucket.file(thumbFilePath);
+  const thumbnailFile = bucket.file(thumbnailFilePath);
+  const galleryFile = bucket.file(galleryFilePath);
   const metadata = { contentType: 'image/jpeg' };
 
   // Create the temp directory where the storage file will be downloaded.
@@ -55,38 +58,61 @@ exports.processImages = functions.storage.object().onChange(event => {
     // Download file from bucket.
     return file.download({ destination: tempLocalFile });
   }).then(() => {
+    // Update status.
+    let updateData = {};
+    updateData[`snaps.${pokemon}.status`] = 'Creating thumbnail';
+    return admin.firestore().collection('users').doc(trainerId).update(updateData);
+  }).then(() => {
     console.log('The file has been downloaded to', tempLocalFile);
-    // Generate a thumbnail using ImageMagick.
-    return spawn('convert', [tempLocalFile,
-      '-thumbnail', '192x192^',
-      '-gravity', 'center',
-      '-extent', '192x192',
-      '-format', 'jpg',
-      tempLocalThumbFile], { capture: ['stdout', 'stderr'] });
+    // Generate a thumbnail and gallery image using ImageMagick.
+    return Promise.all([
+      spawn('convert', [tempLocalFile,
+        '-thumbnail', '192x192^',
+        '-gravity', 'center',
+        '-extent', '192x192',
+        '-format', 'jpg',
+        tempLocalThumbnailFile], { capture: ['stdout', 'stderr'] }),
+      spawn('convert', [tempLocalFile,
+        '-resize', '1200x1200>',
+        '-format', 'jpg',
+        tempLocalGalleryFile], { capture: ['stdout', 'stderr'] })
+    ]);
   }).then(() => {
-    console.log('Thumbnail created at', tempLocalThumbFile);
-    // Uploading the Thumbnail.
-    return bucket.upload(tempLocalThumbFile, { destination: thumbFilePath, metadata: metadata });
+    console.log('Thumbnail created at', tempLocalThumbnailFile);
+    console.log('Gallery image created at', tempLocalGalleryFile);
+    // Uploading the images.
+    return Promise.all([
+      bucket.upload(tempLocalThumbnailFile, { destination: thumbnailFilePath, metadata: metadata }),
+      bucket.upload(tempLocalGalleryFile, { destination: galleryFilePath, metadata: metadata })
+    ]);
   }).then(() => {
-    console.log('Thumbnail uploaded to Storage at', thumbFilePath);
-    // Once the image has been uploaded delete the local files to free up disk space.
+    console.log('Thumbnail uploaded to Storage at', thumbnailFilePath);
+    console.log('Gallery image uploaded to Storage at', galleryFilePath);
+    // Once the images have been uploaded delete the local files to free up disk space.
     fs.unlinkSync(tempLocalFile);
-    fs.unlinkSync(tempLocalThumbFile);
-    // Get the Signed URLs for the thumbnail and original image.
+    fs.unlinkSync(tempLocalThumbnailFile);
+    fs.unlinkSync(tempLocalGalleryFile);
+    // Get the Signed URLs for the thumbnail and gallery image.
     const config = {
       action: 'read',
       expires: '03-01-2500'
     };
     return Promise.all([
-      thumbFile.getSignedUrl(config)
+      thumbnailFile.getSignedUrl(config),
+      galleryFile.getSignedUrl(config)
     ]);
   }).then(results => {
-    console.log('Got Signed URLs.');
-    const thumbResult = results[0];
-    const thumbFileUrl = thumbResult[0];
+    console.log('Got Signed URL.');
+    const version = +new Date();
+    const thumbnailResult = results[0];
+    const thumbnailFileUrl = thumbnailResult[0] + `&v=${version}`;
+    const galleryResult = results[1];
+    const galleryFileUrl = galleryResult[0] + `&v=${version}`;
     // Add the URLs to Firestore.
-    let updateData = {};
-    updateData['thumbnails.' + pokemon] = thumbFileUrl;
+    let updateData = {}
+    updateData[`snaps.${pokemon}.thumbnail`] = thumbnailFileUrl;
+    updateData[`snaps.${pokemon}.gallery`] = galleryFileUrl;
+    updateData[`snaps.${pokemon}.status`] = null;
     return admin.firestore().collection('users').doc(trainerId).update(updateData);
-  }).then(() => console.log('Thumbnail URLs saved to Firestore.'));
+  }).then(() => console.log('Thumbnail and gallery image URLs saved to Firestore.'));
 });

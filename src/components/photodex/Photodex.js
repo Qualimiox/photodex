@@ -23,7 +23,7 @@ export default function Photodex(props) {
 
   let entries = pokedex.map((pokemon, i) => (
     <Entry key={i} pokemon={pokemon} trainerId={trainer.id} editMode={editMode}
-      url={trainer.thumbnails[pokemon.number]} />
+      snap={trainer.snaps[pokemon.number]} />
   ));
 
   // Placeholders provide a hacky way to ensure that last row of aligns to grid.

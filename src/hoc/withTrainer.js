@@ -34,7 +34,7 @@ export default function withUser(WrappedComponent) {
         if (doc) {
           let trainer = doc.data();
           trainer.id = doc.id;
-          trainer.thumbnails = trainer.thumbnails || {};
+          trainer.snaps = trainer.snaps || {};
           this.setState({ trainer });
         } else {
           this.setState({ trainer: null });
