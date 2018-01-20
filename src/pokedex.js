@@ -2288,7 +2288,7 @@ export const pokedex = [
   {
     "number": "382",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Kyogre"
   },
   {
