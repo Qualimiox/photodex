@@ -1,6 +1,7 @@
 import alertify from 'alertify.js';
 import firebase from 'firebase';
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Spinner from './Spinner';
 import IconButton from '../shared/IconButton';
 
@@ -45,16 +46,16 @@ export default class Entry extends Component {
   }
 
   getDocRef() {
-    return firebase.firestore().collection('users').doc(this.props.trainerId);
+    return firebase.firestore().collection('users').doc(this.props.trainer.id);
   }
 
   getStorageRef(file) {
-    let path = `photodex/${this.props.trainerId}/snaps/${this.props.pokemon.number}/${file}`;
+    let path = `photodex/${this.props.trainer.id}/snaps/${this.props.pokemon.number}/${file}`;
     return firebase.storage().ref(path);
   }
 
   render() {
-    let { editMode, pokemon, snap } = this.props;
+    let { editMode, pokemon, snap, trainer } = this.props;
     let className = `Photodex-Entry ${pokemon.region.toLowerCase()}`;
     let thumbnail = snap ? snap.thumbnail : undefined;
     let status = snap ? snap.status : undefined;
@@ -65,8 +66,11 @@ export default class Entry extends Component {
       <div className={className}>
         <input type="file" style={{ display: 'none' }} ref={input => this.fileInput = input} />
         {status ? <Spinner status={status} /> :
-          thumbnail ? <img src={thumbnail} alt={pokemon.name} /> :
-            pokemon.number}
+          thumbnail ? (
+            <Link to={`/${trainer.name}/${pokemon.number}`}>
+              <img src={thumbnail} alt={pokemon.name} />
+            </Link>
+          ) : pokemon.number}
         {editMode && pokemon.obtainable &&
           <div className="Photodex-Entry-edit">
             <div className="Photodex-Entry-edit-name">{pokemon.name}</div>

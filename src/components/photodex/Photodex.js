@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { pokedex } from '../../pokedex';
 import './Photodex.css';
 import Entry from './Entry';
+import Gallery from './Gallery';
 import Placeholder from './Placeholder';
 
 export default function Photodex(props) {
@@ -14,15 +15,18 @@ export default function Photodex(props) {
   }
 
   let editMode = false;
+  let current = null;
   let canEdit = user && (user.name === trainer.name);
   if (numberOrMode === 'edit' && canEdit) {
     editMode = true;
+  } else if (trainer.snaps[numberOrMode]) {
+    current = numberOrMode;
   } else if (numberOrMode) {
     return (<Redirect to={`/${trainer.name}`} />);
   }
 
   let entries = pokedex.map((pokemon, i) => (
-    <Entry key={i} pokemon={pokemon} trainerId={trainer.id} editMode={editMode}
+    <Entry key={i} pokemon={pokemon} trainer={trainer} editMode={editMode}
       snap={trainer.snaps[pokemon.number]} />
   ));
 
@@ -34,6 +38,7 @@ export default function Photodex(props) {
     <div className="Photodex">
       {entries}
       {placeholders}
+      {current && <Gallery snaps={trainer.snaps} current={current} trainer={trainer} />}
     </div>
   );
 }
