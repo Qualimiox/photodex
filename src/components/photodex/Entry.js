@@ -7,7 +7,7 @@ import IconButton from '../shared/IconButton';
 
 export default class Entry extends Component {
   onUploadClicked() {
-    if (this.props.url) {
+    if (this.props.snap) {
       alertify.confirm(`Replace ${this.props.pokemon.name} snap?`, () => this.uploadSnap());
     } else {
       this.uploadSnap();
@@ -18,8 +18,11 @@ export default class Entry extends Component {
     this.fileInput.onchange = () => {
       let file = this.fileInput.files[0];
       if (file) {
-        this.updateStatus('Uploading');
-        this.getStorageRef('raw').put(file).then(() => this.updateStatus('Processing'));
+        this.updateStatus('Uploading').then(() =>
+          this.getStorageRef('raw').put(file).then(
+            () => this.updateStatus('Processing')
+          )
+        );
       }
       this.fileInput.onchange = null;
     }
@@ -29,7 +32,7 @@ export default class Entry extends Component {
   updateStatus(value) {
     let updateData = {};
     updateData[`snaps.${this.props.pokemon.number}.status`] = value;
-    this.getDocRef().update(updateData);
+    return this.getDocRef().update(updateData);
   }
 
   onDeleteClicked() {
@@ -37,12 +40,18 @@ export default class Entry extends Component {
   }
 
   deleteSnap() {
-    let updateData = {};
-    updateData[`snaps.${this.props.pokemon.number}`] = firebase.firestore.FieldValue.delete();
-    this.getDocRef().update(updateData);
-    this.getStorageRef('raw').delete();
-    this.getStorageRef('thumbnail').delete();
-    this.getStorageRef('gallery').delete();
+    if (!this.props.snap) {
+      return Promise.resolve();
+    }
+    return this.updateStatus('Deleting').then(() => Promise.all([
+      this.getStorageRef('raw').delete(),
+      this.getStorageRef('thumbnail').delete(),
+      this.getStorageRef('gallery').delete()
+    ])).then(() => {
+      let updateData = {};
+      updateData[`snaps.${this.props.pokemon.number}`] = firebase.firestore.FieldValue.delete();
+      this.getDocRef().update(updateData);
+    });
   }
 
   getDocRef() {
@@ -57,7 +66,6 @@ export default class Entry extends Component {
   render() {
     let { editMode, pokemon, snap, trainer } = this.props;
     let className = `Photodex-Entry ${pokemon.region.toLowerCase()}`;
-    let thumbnail = snap ? snap.thumbnail : undefined;
     let status = snap ? snap.status : undefined;
     if (!pokemon.obtainable) {
       className += ' unobtainable';
@@ -66,9 +74,9 @@ export default class Entry extends Component {
       <div className={className}>
         <input type="file" style={{ display: 'none' }} ref={input => this.fileInput = input} />
         {status ? <Spinner status={status} /> :
-          thumbnail ? (
+          snap ? (
             <Link to={`/${trainer.name}/${pokemon.number}`}>
-              <img src={thumbnail} alt={pokemon.name} />
+              <img src={snap.thumbnail} alt={pokemon.name} />
             </Link>
           ) : pokemon.number}
         {editMode && pokemon.obtainable &&
@@ -77,7 +85,7 @@ export default class Entry extends Component {
             {!status && <div className="Photodex-Entry-edit-buttons">
               <IconButton icon="upload" onClick={() => this.onUploadClicked()}
                 title="Upload" aria-label="Upload" />
-              {thumbnail && <IconButton icon="trash" onClick={() => this.onDeleteClicked()}
+              {snap && <IconButton icon="trash" onClick={() => this.onDeleteClicked()}
                 title="Delete" aria-label="Delete" />}
             </div>}
           </div>}
