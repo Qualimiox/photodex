@@ -30,7 +30,7 @@ export default function Photodex(props) {
       snap={trainer.snaps[pokemon.number]} />
   ));
 
-  // Placeholders provide a hacky way to ensure that last row of aligns to grid.
+  // Placeholders provide a hacky way to ensure that last flex row aligns to grid.
   // http://stackoverflow.com/a/22018710
   let placeholders = new Array(20).fill(null).map((_, i) => <Placeholder key={i} />);
 
