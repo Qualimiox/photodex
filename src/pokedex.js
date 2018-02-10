@@ -1652,25 +1652,25 @@ export const pokedex = [
   {
     "number": "276",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Taillow"
   },
   {
     "number": "277",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Swellow"
   },
   {
     "number": "278",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Wingull"
   },
   {
     "number": "279",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Pelipper"
   },
   {
@@ -1694,13 +1694,13 @@ export const pokedex = [
   {
     "number": "283",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Surskit"
   },
   {
     "number": "284",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Masquerain"
   },
   {
@@ -1754,13 +1754,13 @@ export const pokedex = [
   {
     "number": "293",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Whismur"
   },
   {
     "number": "294",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Loudred"
   },
   {
@@ -1790,7 +1790,7 @@ export const pokedex = [
   {
     "number": "299",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Nosepass"
   },
   {
@@ -1820,19 +1820,19 @@ export const pokedex = [
   {
     "number": "304",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Aron"
   },
   {
     "number": "305",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Lairon"
   },
   {
     "number": "306",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Aggron"
   },
   {
@@ -1874,13 +1874,13 @@ export const pokedex = [
   {
     "number": "313",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Volbeat"
   },
   {
     "number": "314",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Illumise"
   },
   {
@@ -1928,19 +1928,19 @@ export const pokedex = [
   {
     "number": "322",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Numel"
   },
   {
     "number": "323",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Camerupt"
   },
   {
     "number": "324",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Torkoal"
   },
   {
@@ -1964,13 +1964,13 @@ export const pokedex = [
   {
     "number": "328",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Trapinch"
   },
   {
     "number": "329",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Vibrava"
   },
   {
@@ -1982,19 +1982,19 @@ export const pokedex = [
   {
     "number": "331",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Cacnea"
   },
   {
     "number": "332",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Cacturne"
   },
   {
     "number": "333",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Swablu"
   },
   {
@@ -2018,13 +2018,13 @@ export const pokedex = [
   {
     "number": "337",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Lunatone"
   },
   {
     "number": "338",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Solrock"
   },
   {
@@ -2054,37 +2054,37 @@ export const pokedex = [
   {
     "number": "343",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Baltoy"
   },
   {
     "number": "344",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Claydol"
   },
   {
     "number": "345",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Lileep"
   },
   {
     "number": "346",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Cradily"
   },
   {
     "number": "347",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Anorith"
   },
   {
     "number": "348",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Armaldo"
   },
   {
@@ -2102,7 +2102,7 @@ export const pokedex = [
   {
     "number": "351",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Castform"
   },
   {
@@ -2138,13 +2138,13 @@ export const pokedex = [
   {
     "number": "357",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Tropius"
   },
   {
     "number": "358",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Chimecho"
   },
   {
@@ -2222,13 +2222,13 @@ export const pokedex = [
   {
     "number": "371",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Bagon"
   },
   {
     "number": "372",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Shelgon"
   },
   {
@@ -2240,13 +2240,13 @@ export const pokedex = [
   {
     "number": "374",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Beldum"
   },
   {
     "number": "375",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Metang"
   },
   {
