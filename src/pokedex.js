@@ -2300,7 +2300,7 @@ export const pokedex = [
   {
     "number": "384",
     "region": "Hoenn",
-    "obtainable": false,
+    "obtainable": true,
     "name": "Rayquaza"
   },
   {
