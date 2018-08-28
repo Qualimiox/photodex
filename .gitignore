@@ -1,6 +1,4 @@
 assets/
-scripts/
-styles/
 snaps/*.png
 snaps/**/missingno.*
 
